@@ -1,7 +1,7 @@
 from django.db import models
 from core.utils import validate_range_points
 
-__all__ = ['Prize']
+__all__ = ['Prize', 'Result']
 
 
 class Prize(models.Model):
