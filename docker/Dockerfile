@@ -9,16 +9,16 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
+COPY ../requirements.txt .
 
 RUN python -m pip install --upgrade pip \
     && python -m pip install --no-cache-dir -r requirements.txt
 
-COPY /entrypoint.sh /entrypoint.sh
+COPY /docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
 
-COPY . .
+COPY .. .
 
 EXPOSE 8080
 

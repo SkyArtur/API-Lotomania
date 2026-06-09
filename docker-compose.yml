@@ -18,7 +18,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: docker/Dockerfile
     container_name: lot_api
     restart: always
     expose:
@@ -40,7 +40,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
       - lot_static:/staticfiles
     depends_on:
       - api
