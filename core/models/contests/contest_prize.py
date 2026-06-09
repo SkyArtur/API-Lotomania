@@ -7,7 +7,7 @@ __all__ = ['ContestPrize']
 
 class ContestPrize(Prize):
     contest = models.ForeignKey(to='Contest', on_delete=models.CASCADE, related_name='prizes')
-    winners = models.PositiveSmallIntegerField(default=0)
+    winners = models.PositiveIntegerField(default=0)
 
     class Meta:
         db_table = 'contest_prize'

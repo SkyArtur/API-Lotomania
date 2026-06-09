@@ -13,8 +13,8 @@ class Prize(models.Model):
 
 
 class Result(models.Model):
-    hits = models.PositiveSmallIntegerField()
-    mirror_hits = models.PositiveSmallIntegerField()
+    hits = models.PositiveIntegerField()
+    mirror_hits = models.PositiveIntegerField()
 
     class Meta:
         abstract = True

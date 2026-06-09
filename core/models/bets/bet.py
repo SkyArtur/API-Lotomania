@@ -7,8 +7,8 @@ __all__ = ['Bet']
 class Bet(models.Model):
     date = models.DateField(default=localdate)
     value = models.DecimalField(max_digits=8, decimal_places=2)
-    initial = models.PositiveSmallIntegerField()
-    final = models.PositiveSmallIntegerField()
+    initial = models.PositiveIntegerField()
+    final = models.PositiveIntegerField()
     mirror = models.BooleanField(default=True)
     numbers = models.ManyToManyField('Number', related_name='bets', through='BetNumber')
     contests = models.ManyToManyField('Contest', related_name='bets', through='BetContest')

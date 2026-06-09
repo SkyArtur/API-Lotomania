@@ -4,7 +4,7 @@ __all__ = ['Contest']
 
 
 class Contest(models.Model):
-    reference = models.PositiveSmallIntegerField(primary_key=True)
+    reference = models.PositiveIntegerField(primary_key=True)
     date = models.DateField()
     numbers = models.ManyToManyField('Number', related_name='contests', through='ContestNumber')
 
