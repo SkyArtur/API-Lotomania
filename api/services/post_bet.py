@@ -3,7 +3,6 @@ from rest_framework.exceptions import ValidationError
 
 from .creates import (
     create_bet,
-    create_bet_prize,
     bulk_create_any_number,
     bulk_create_bet_contest,
     bulk_create_bet_result,
