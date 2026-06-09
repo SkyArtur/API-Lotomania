@@ -17,14 +17,14 @@ __all__ = [
 
 class BetResultSerializer(serializers.Serializer):
 
-    contest = serializers.SlugRelatedField(slug_field='reference', read_only=True)
+    contest = serializers.IntegerField(source='contest.reference', read_only=True)
     hits = serializers.IntegerField()
     mirror_hits = serializers.IntegerField()
 
 
 class BetPrizeSerializer(serializers.Serializer):
 
-    contest = serializers.SlugRelatedField(slug_field='reference', read_only=True)
+    contest = serializers.IntegerField(source='contest.reference', read_only=True)
     points = serializers.IntegerField()
     value = serializers.DecimalField(max_digits=12, decimal_places=2)
 
