@@ -1,0 +1,55 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: lot_db
+    restart: always
+    env_file:
+      - ./.env
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - lot_data:/var/lib/postgresql/data
+    networks:
+      - lot_network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lot_api
+    restart: always
+    expose:
+      - "8080"
+    env_file:
+      - ./.env
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - lot_static:/app/staticfiles
+    networks:
+      - lot_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: lot_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - lot_static:/staticfiles
+    depends_on:
+      - api
+    networks:
+      - lot_network
+
+volumes:
+  lot_data:
+  lot_static:
+
+networks:
+  lot_network:
