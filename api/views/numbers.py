@@ -1,9 +1,9 @@
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotFound
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from drf_spectacular.utils import extend_schema
 
 from core.models import Number
 from api.serializers import NumberSerializer
@@ -15,7 +15,7 @@ class NumberViewSet(mixins.ListModelMixin, GenericViewSet):
     lookup_field = 'value'
     http_method_names = ['get', 'head', 'options']
 
-
+    @extend_schema(description= 'Retorna uma lista de números de 0 a 99.', responses={200: NumberSerializer(many=True)})
     @action(detail=False, methods=['get'], url_path='all')
     def all(self, request):
         numbers = self.get_queryset()

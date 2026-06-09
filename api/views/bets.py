@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from drf_spectacular.utils import extend_schema
 
 from core.models import Bet
 from api.serializers import BetDetailSerializer, BetListSerializer, BetCreateSerializer, BetNumbersListSerializer
@@ -42,7 +43,15 @@ class BetViewSet(
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['get'], url_path='latest')
+    @extend_schema(
+        description='Retorna a última aposta registrada.',
+        responses={200: BetDetailSerializer}
+    )
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path='latest'
+    )
     def latest(self, request):
         bet = self.get_queryset().order_by('-date').first()
 
@@ -52,7 +61,15 @@ class BetViewSet(
         serializer = self.get_serializer(bet)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['get'], url_path='all')
+    @extend_schema(
+        description='Retorna uma lista de apostas detalhadas.',
+        responses={200: BetDetailSerializer}
+    )
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path='all'
+    )
     def all(self, request):
         contests = self.get_queryset()
 
@@ -62,7 +79,15 @@ class BetViewSet(
         serializer = self.get_serializer(contests, many=True)
         return Response(serializer, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['get'], url_path='numbers')
+    @extend_schema(
+        description='Retorna uma lista com os números apostados.',
+        responses={200: BetNumbersListSerializer}
+    )
+    @action(
+        detail=False,
+        methods=['get'],
+        url_path='numbers'
+    )
     def numbers(self, request):
         bets = self.get_queryset().order_by('-date')
         serializer = self.get_serializer(bets, many=True)

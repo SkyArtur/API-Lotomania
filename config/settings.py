@@ -30,10 +30,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Django REST Framework
-    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
+    'drf_spectacular',
+    'corsheaders',
     # Local apps
     'core',
     'api'
@@ -63,6 +64,7 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": (
         "rest_framework.pagination.PageNumberPagination"
     ),
@@ -141,3 +143,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'LotoMania API',
+    'DESCRIPTION': 'API para consulta de dados da LotoMania',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+}
