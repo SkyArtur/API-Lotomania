@@ -76,7 +76,7 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "api.exceptions.custom_exception_handler",
 }
 
-AUTH_USER_MODEL = 'core.Apostador'
+# AUTH_USER_MODEL = 'core.Apostador'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
