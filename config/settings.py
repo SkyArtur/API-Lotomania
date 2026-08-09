@@ -190,3 +190,21 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+# Celery
+# https://docs.celeryq.dev/en/stable/userguide/configuration.html
+
+CELERY_BROKER_URL = ENV('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = ENV('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = True
+
+CELERY_BEAT_SCHEDULE = {
+    'atualizar-sorteios': {
+        'task': 'core.tasks.atualizar_sorteios_task',
+        'schedule': crontab(day_of_week='tue,thu,sat', hour=21, minute=0),
+    },
+}
