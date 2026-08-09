@@ -5,6 +5,7 @@ from .extractors import (
     extrair_referencias_sorteio_lotomania,
     extrair_premios_sorteio_lotomania
 )
+from .validators import validar_pontos, validar_username
 
 
 
@@ -16,5 +17,7 @@ __all__ = [
     'leitor_csv',
     'extrair_numeros_sorteio_lotomania',
     'extrair_referencias_sorteio_lotomania',
-    'extrair_premios_sorteio_lotomania'
+    'extrair_premios_sorteio_lotomania',
+    'validar_pontos',
+    'validar_username'
 ]
