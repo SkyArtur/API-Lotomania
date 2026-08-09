@@ -1,3 +1,9 @@
+"""
+Fixture com um CSV temporário no formato do `lotomania.csv` oficial (mesmas
+colunas, dados fictícios), usada pelos testes de `core.utils` e `core.data`
+sem depender do arquivo real.
+"""
+
 import csv
 import tempfile
 from pathlib import Path
