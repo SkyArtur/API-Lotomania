@@ -13,7 +13,7 @@ def analisar_datas(data: str, *, formato_iso: bool = False) -> Optional[date]:
     """
     try:
 
-        padrao = r'^(\d{4})[/-]?(\d{2})[/-](\d{2})$' if formato_iso else r'^(\d{2})[/-]?(\d{2})[/-](\d{4})$'
+        padrao = r'^(\d{4})[/-]?(\d{2})[/-]?(\d{2})$' if formato_iso else r'^(\d{2})[/-]?(\d{2})[/-]?(\d{4})$'
         correspondencia = re.match(padrao, data)
 
         if not correspondencia:
