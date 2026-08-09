@@ -1,3 +1,10 @@
+"""
+Testes de `core.utils`: leitura do CSV (`readers`), normalização dos dados
+lidos (`parsers`) e extração dos campos prontos para uso pelos serviços de
+`api.services` (`extractors`). Usa o CSV fictício de `temp_file.TEMP_FILE`,
+não o `lotomania.csv` oficial.
+"""
+
 from django.test import TestCase
 
 from .temp_file import TEMP_FILE
@@ -15,6 +22,7 @@ from core.utils import (
 
 
 class LeitorCSVTestCase(TestCase):
+    """Testes de `leitor_csv`."""
 
     def test_leitor_csv(self):
         """Testar se a função `leitor_csv` retorna uma lista e se o conteúdo continua íntegro."""
@@ -27,8 +35,10 @@ class LeitorCSVTestCase(TestCase):
 
 
 class ParsersTestCase(TestCase):
+    """Testes das funções de `core.utils.parsers`."""
 
     def setUp(self):
+        """Carrega o conteúdo bruto (não normalizado) do CSV fictício."""
         self.conteudo = leitor_csv(TEMP_FILE)
 
     def test_analisar_datas(self):
@@ -68,7 +78,7 @@ class ParsersTestCase(TestCase):
         self.assertEqual(analisar_pontos(15.5), None)
 
     def test_analisar_sorteio(self):
-        """Testar se a função `analisar_concurso` normaliza as chaves e retorna uma lista de dicionários."""
+        """Testar se a função `analisar_sorteio` normaliza as chaves e retorna uma lista de dicionários."""
 
         analises = analisar_sorteio(self.conteudo)
 
@@ -81,7 +91,10 @@ class ParsersTestCase(TestCase):
 
 
 class ExtractorsTestCase(TestCase):
+    """Testes das funções de `core.utils.extractors`."""
+
     def setUp(self):
+        """Carrega e normaliza o conteúdo do CSV fictício, insumo dos extractors."""
         self.conteudo = leitor_csv(TEMP_FILE)
         self.analisador = analisar_sorteio(self.conteudo)
 
@@ -108,7 +121,7 @@ class ExtractorsTestCase(TestCase):
         self.assertEqual(isinstance(numeros[0], int), True)
 
     def test_extrair_premios_sorteio_lotomania(self):
-        """Testar se o extrator retorna um dicionário com prêmios e as chaves apropriadas para as models futuras."""
+        """Testar se o extrator retorna uma lista de dicionários de prêmios, com as chaves apropriadas para as models."""
 
         item = self.analisador[1]
         premios = extrair_premios_sorteio_lotomania(item)
