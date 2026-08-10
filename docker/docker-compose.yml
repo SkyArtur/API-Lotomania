@@ -1,10 +1,10 @@
-name: api-lotomania
+name: api-lotomania-v0.1.1
 
 services:
   db:
     image: postgres:18-alpine
     restart: unless-stopped
-    container_name: db
+    container_name: db-lotomania
     env_file:
       - ../.env
     volumes:
@@ -20,7 +20,7 @@ services:
   redis:
     image: redis:8-alpine
     restart: unless-stopped
-    container_name: redis
+    container_name: redis-lotomania
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
@@ -34,7 +34,7 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     restart: unless-stopped
-    container_name: api
+    container_name: api-lotomania
     env_file:
       - ../.env
     environment:
@@ -51,14 +51,13 @@ services:
         condition: service_healthy
     networks:
       - internal
-      - shared
 
   worker:
     build:
       context: ..
       dockerfile: docker/Dockerfile
     restart: unless-stopped
-    container_name: worker
+    container_name: worker-lotomania
     env_file:
       - ../.env
     environment:
@@ -80,7 +79,7 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     restart: unless-stopped
-    container_name: beat
+    container_name: beat-lotomania
     env_file:
       - ../.env
     environment:
@@ -101,6 +100,3 @@ volumes:
 
 networks:
   internal:
-  shared:
-    name: net-lotomania
-    external: true
