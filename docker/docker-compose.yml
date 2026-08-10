@@ -1,0 +1,106 @@
+name: api-lotomania
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    container_name: db
+    env_file:
+      - ../.env
+    volumes:
+      - APILotomaniaData:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+  redis:
+    image: redis:8-alpine
+    restart: unless-stopped
+    container_name: redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    container_name: api
+    env_file:
+      - ../.env
+    environment:
+      DJANGO_ENV: production
+      DEBUG: "False"
+    ports:
+      - "8085:8080"
+    volumes:
+      - ../core/data/file:/app/core/data/file:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+      - shared
+
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    container_name: worker
+    env_file:
+      - ../.env
+    environment:
+      DJANGO_ENV: production
+      DEBUG: "False"
+    command: ["celery", "-A", "config", "worker", "-l", "info"]
+    volumes:
+      - ../core/data/file:/app/core/data/file:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+
+  beat:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    container_name: beat
+    env_file:
+      - ../.env
+    environment:
+      DJANGO_ENV: production
+      DEBUG: "False"
+    command: ["celery", "-A", "config", "beat", "-l", "info"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+
+volumes:
+  APILotomaniaData:
+    name: APILotomaniaData
+
+networks:
+  internal:
+  shared:
+    name: net-lotomania
+    external: true
