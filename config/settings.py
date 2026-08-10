@@ -187,7 +187,7 @@ MAILERS = {
 SPECTACULAR_SETTINGS = {
     'TITLE': 'API-Lotomania',
     'DESCRIPTION': 'API para consulta de dados da Lotomania',
-    'VERSION': '1.0.0',
+    'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
 
