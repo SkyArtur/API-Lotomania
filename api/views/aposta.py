@@ -7,7 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from drf_spectacular.utils import (
     OpenApiExample,
     extend_schema,
-    extend_schema_view
+    extend_schema_view,
+    OpenApiResponse
 )
 
 from core.models import Aposta
@@ -45,7 +46,7 @@ __all__ = ['ApostaViewSet']
             'verdadeiro, os acertos também são conferidos considerando o espelho dos números sorteados.'
         ),
         request=ApostaCreateSerializer,
-        responses={201: ApostaCreateSerializer},
+        responses={201: OpenApiResponse(description='Aposta criada com sucesso.')},
         examples=[
             OpenApiExample(
                 'Criação de aposta',
@@ -113,7 +114,7 @@ class ApostaViewSet(
 
         registrar_aposta(request, serializer.validated_data)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'detail': 'Aposta registrada com sucesso.'}, status=status.HTTP_201_CREATED)
 
     @extend_schema(
         description='Retorna a aposta mais recente (por data) do apostador autenticado.',
