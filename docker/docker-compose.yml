@@ -51,7 +51,6 @@ services:
         condition: service_healthy
     networks:
       - internal
-      - shared
 
   worker:
     build:
@@ -101,6 +100,3 @@ volumes:
 
 networks:
   internal:
-  shared:
-    name: net-lotomania
-    external: true
