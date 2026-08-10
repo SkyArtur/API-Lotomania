@@ -1,4 +1,4 @@
-from rest_framework import serializers, status, mixins
+from rest_framework import status, mixins
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
@@ -7,7 +7,7 @@ from drf_spectacular.utils import (
     OpenApiExample,
     extend_schema,
     extend_schema_view,
-    inline_serializer
+    OpenApiResponse
 )
 
 from core.models import Sorteio
@@ -16,7 +16,6 @@ from api.serializers import (
     SorteioDetalheModelSerializer,
     SorteioListSerializer,
     SorteioCreateSerializer,
-    SorteioNumeroListSerializer
 )
 
 
@@ -47,14 +46,7 @@ __all__ = ['SorteioViewSet']
             'intervalo (`inicial`/`final`) cobre a sua referência.'
         ),
         request=SorteioCreateSerializer,
-        responses={
-            201: inline_serializer(
-                name='SorteioCriadoResponseSerializer',
-                fields={
-                    'detail': serializers.CharField()
-                }
-            )
-        },
+        responses={201: OpenApiResponse(description='Sorteio criado com sucesso.')},
         examples=[
             OpenApiExample(
                 'Criação de sorteio',
@@ -99,8 +91,6 @@ class SorteioViewSet(
                 return SorteioCreateSerializer
             case 'list':
                 return SorteioListSerializer
-            case 'numbers':
-                return SorteioNumeroListSerializer
             case _:
                 return SorteioDetalheModelSerializer
 
