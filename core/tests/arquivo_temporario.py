@@ -9,7 +9,7 @@ import tempfile
 from pathlib import Path
 
 
-__all__ = ['TEMP_FILE']
+__all__ = ['ARQUIVO_TEMPORARIO']
 
 _campos = [
     'Concurso',
@@ -35,7 +35,7 @@ _campos = [
     'Rateio Nenhum Número',
 ]
 
-fake_dados_lotomania = [
+dados_ficticios_lotomania = [
     {
         'Concurso': '0211',
         'Data Sorteio': '21/10/1999',
@@ -85,9 +85,9 @@ with tempfile.NamedTemporaryFile(mode='w+', newline='', encoding='utf-8', delete
     escrever = csv.DictWriter(arquivo_csv, fieldnames=_campos)
     escrever.writeheader()
 
-    for d in fake_dados_lotomania:
-        escrever.writerow(d)
+    for linha in dados_ficticios_lotomania:
+        escrever.writerow(linha)
 
     arquivo_csv.flush()
 
-    TEMP_FILE = Path(arquivo_csv.name).resolve()
+    ARQUIVO_TEMPORARIO = Path(arquivo_csv.name).resolve()

@@ -1,13 +1,13 @@
 """
 Testes de `core.utils`: leitura do CSV (`readers`), normalização dos dados
 lidos (`parsers`) e extração dos campos prontos para uso pelos serviços de
-`api.services` (`extractors`). Usa o CSV fictício de `temp_file.TEMP_FILE`,
-não o `lotomania.csv` oficial.
+`api.services` (`extractors`). Usa o CSV fictício de
+`arquivo_temporario.ARQUIVO_TEMPORARIO`, não o `lotomania.csv` oficial.
 """
 
 from django.test import TestCase
 
-from .temp_file import TEMP_FILE
+from .arquivo_temporario import ARQUIVO_TEMPORARIO
 
 from core.utils import (
     leitor_csv,
@@ -27,7 +27,7 @@ class LeitorCSVTestCase(TestCase):
     def test_leitor_csv(self):
         """Testar se a função `leitor_csv` retorna uma lista e se o conteúdo continua íntegro."""
 
-        conteudo = leitor_csv(TEMP_FILE)
+        conteudo = leitor_csv(ARQUIVO_TEMPORARIO)
 
         self.assertEqual(len(conteudo), 2)
         self.assertEqual(isinstance(conteudo, list), True)
@@ -39,7 +39,7 @@ class ParsersTestCase(TestCase):
 
     def setUp(self):
         """Carrega o conteúdo bruto (não normalizado) do CSV fictício."""
-        self.conteudo = leitor_csv(TEMP_FILE)
+        self.conteudo = leitor_csv(ARQUIVO_TEMPORARIO)
 
     def test_analisar_datas(self):
         """Testar se a função `analisar_datas` atua sobre diferentes formatos de data."""
@@ -95,7 +95,7 @@ class ExtractorsTestCase(TestCase):
 
     def setUp(self):
         """Carrega e normaliza o conteúdo do CSV fictício, insumo dos extractors."""
-        self.conteudo = leitor_csv(TEMP_FILE)
+        self.conteudo = leitor_csv(ARQUIVO_TEMPORARIO)
         self.analisador = analisar_sorteio(self.conteudo)
 
     def test_extrair_referencias_sorteio_lotomania(self):
