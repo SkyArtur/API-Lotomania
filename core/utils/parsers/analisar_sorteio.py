@@ -25,8 +25,8 @@ def analisar_sorteio(concursos: list[dict]) -> Optional[list[dict]]:
 
                 if 'Ganhadores' in chave or 'Rateio' in chave:
 
-                    _key = chave.split(' ')
-                    analise[f'{_key[0].lower()}_{_key[1] if _key[1] != "Nenhum" else "0"}'] = valor
+                    _chave = chave.split(' ')
+                    analise[f'{_chave[0].lower()}_{_chave[1] if _chave[1] != "Nenhum" else "0"}'] = valor
 
                 else:
 
