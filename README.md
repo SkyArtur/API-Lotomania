@@ -89,7 +89,7 @@ Os arquivos de Docker ficam em `/docker/`. O Compose deve ser executado a partir
 docker compose -f docker/docker-compose.yml up -d --build
 ```
 
-Isso sobe cinco serviços: `db` (PostgreSQL), `redis`, `api` (Gunicorn, porta `8080`), `worker` e `beat` (Celery).
+Isso sobe cinco serviços: `db` (PostgreSQL), `redis`, `api` (Gunicorn, porta `8080`), `worker` e `beat` (Celery). 
 A API fica disponível em `http://localhost:8085/api-lotomania/`.
 
 > **📌 Importante:** as migrações não rodam automaticamente — aplique-as manualmente após o primeiro `up`:
@@ -106,9 +106,6 @@ docker compose -f docker/docker-compose.yml exec api python manage.py createsupe
 docker compose -f docker/docker-compose.yml down             # para os containers
 docker compose -f docker/docker-compose.yml down -v          # para e remove os volumes (apaga o banco)
 ```
-
-A API se conecta a uma rede externa fixa (`net-lotomania`), criada por este mesmo Compose, para que uma futura
-stack do APP (React) possa alcançá-la pelo nome do serviço (`api`) sem depender da porta publicada no host.
 
 ## 🔄 Atualização dos sorteios (`lotomania.csv`)
 
