@@ -377,6 +377,4 @@ poetry.toml
 pyrightconfig.json
 
 # Project Artifacts
-/PR.md
-/AGENTS.ms
-/lab/
+/.lab/
