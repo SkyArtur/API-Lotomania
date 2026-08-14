@@ -80,9 +80,17 @@ class SorteioViewSet(
     remoção: um sorteio, uma vez registrado, é definitivo.
     """
 
-    queryset = Sorteio.objects.prefetch_related('numeros', 'premios',)
+    queryset = Sorteio.objects.prefetch_related('numeros', 'premios',).distinct()
     lookup_field = 'referencia'
     http_method_names = ['get', 'post', 'head', 'options']
+    filterset_fields = {
+        'referencia': ['exact'],
+        'data': ['exact', 'lte', 'gte'],
+        'numeros__valor': ['exact'],
+        'premios__pontos': ['exact'],
+        'premios__valor': ['gte']
+    }
+    ordering_fields = ['referencia', 'data']
 
     def get_serializer_class(self):
 

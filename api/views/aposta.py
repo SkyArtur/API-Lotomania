@@ -90,11 +90,24 @@ class ApostaViewSet(
     lookup_field = 'id'
     http_method_names = ['get', 'post', 'delete', 'head', 'options']
     permission_classes = [IsAuthenticated,]
+    filterset_fields = {
+        'data': ['exact', 'lte', 'gte'],
+        'valor': ['exact', 'lte', 'gte'],
+        'inicial': ['gte'],
+        'final': ['lte'],
+        'espelho': ['exact'],
+        'sorteios__referencia': ['exact'],
+        'resultados__acertos': ['gte'],
+        'premios__valor': ['exact', 'gte'],
+    }
+    ordering_fields = ['data', 'valor', 'inicial', 'final']
 
     def get_queryset(self):
 
         return (
-            Aposta.objects.filter(apostador=self.request.user).prefetch_related('sorteios', 'numeros', 'premios')
+            Aposta.objects.filter(apostador=self.request.user)
+            .prefetch_related('sorteios', 'numeros', 'premios')
+            .distinct()
         )
 
     def get_serializer_class(self):
