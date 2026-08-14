@@ -3,6 +3,8 @@ from decimal import Decimal
 from django.contrib.auth.password_validation import validate_password
 from django.db.models import Sum
 from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 from core.models import Apostador, ApostaPremio
 
@@ -12,6 +14,7 @@ __all__ = [
     'ApostadorRegistroSerializer',
     'ApostadorPerfilSerializer',
     'ApostadorAlterarSenhaSerializer',
+    'ApostadorLogoutSerializer',
 ]
 
 
@@ -108,3 +111,24 @@ class ApostadorAlterarSenhaSerializer(serializers.Serializer):
         instance.save(update_fields=['password'])
 
         return instance
+
+
+class ApostadorLogoutSerializer(serializers.Serializer):
+    """Valida o refresh token informado no logout e o invalida (blacklist) ao ser salvo."""
+
+    refresh = serializers.CharField(write_only=True)
+
+    def validate_refresh(self, valor):
+        """Garante que o refresh token é válido (assinatura, expiração, ainda não invalidado)."""
+
+        try:
+            self.token = RefreshToken(valor)
+        except TokenError as erro:
+            raise serializers.ValidationError(str(erro))
+
+        return valor
+
+    def save(self, **kwargs):
+        """Adiciona o refresh token à blacklist, encerrando a sessão associada a ele."""
+
+        self.token.blacklist()
