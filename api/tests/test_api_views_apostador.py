@@ -1,9 +1,10 @@
 """
 Testes HTTP de `ApostadorViewSet`: cadastro público (`create`), consulta do
-próprio perfil (`perfil`) e troca de senha (`senha`), sempre restritas ao
-apostador autenticado. Usa `APITestCase`/`APIClient` (ciclo completo de
-URL → permissão → serializer → view), diferente de `test_api_creates.py` e
-`test_api_services.py`, que chamam as funções de `api.services` diretamente.
+próprio perfil (`perfil`), troca de senha (`senha`) e logout (`logout`),
+sempre restritas ao apostador autenticado. Usa `APITestCase`/`APIClient`
+(ciclo completo de URL → permissão → serializer → view), diferente de
+`test_api_creates.py` e `test_api_services.py`, que chamam as funções de
+`api.services` diretamente.
 """
 
 from decimal import Decimal
@@ -11,6 +12,7 @@ from decimal import Decimal
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from core.models import Apostador
 
@@ -158,5 +160,67 @@ class ApostadorSenhaTestCase(APITestCase):
         response = self.client.patch(
             url, {'senha_atual': 'SenhaAntiga!12', 'nova_senha': 'SenhaAntiga!12'}, format='json'
         )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class ApostadorLogoutTestCase(APITestCase):
+    """Testes da action `logout` (`POST /apostador/logout/`)."""
+
+    def setUp(self):
+        """Cria um apostador autenticado e um refresh token válido para ele."""
+        self.apostador = Apostador.objects.create_user(username='logoutteste', password='S3nhaForte!23')
+        self.refresh = RefreshToken.for_user(self.apostador)
+        self.client.force_authenticate(user=self.apostador)
+
+    def test_logout_exige_autenticacao(self):
+        """Testar se um cliente não autenticado não consegue fazer logout de ninguém."""
+
+        self.client.force_authenticate(user=None)
+        url = reverse('api:apostador-logout')
+
+        response = self.client.post(url, {'refresh': str(self.refresh)}, format='json')
+
+        self.assertIn(response.status_code, (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN))
+
+    def test_logout_sem_refresh_retorna_400(self):
+        """Testar se a ausência do campo `refresh` no corpo é rejeitada pelo serializer."""
+
+        url = reverse('api:apostador-logout')
+
+        response = self.client.post(url, {}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_logout_com_refresh_invalido_retorna_400(self):
+        """Testar se um refresh token malformado é rejeitado com 400, sem estourar erro 500."""
+
+        url = reverse('api:apostador-logout')
+
+        response = self.client.post(url, {'refresh': 'token-invalido'}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_logout_com_sucesso_invalida_o_refresh_token(self):
+        """Testar se o logout retorna 205 sem corpo e o refresh token deixa de servir para renovar o access token."""
+
+        url = reverse('api:apostador-logout')
+
+        response = self.client.post(url, {'refresh': str(self.refresh)}, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_205_RESET_CONTENT)
+        self.assertFalse(response.data)
+
+        response_refresh = self.client.post(reverse('token_refresh'), {'refresh': str(self.refresh)}, format='json')
+
+        self.assertEqual(response_refresh.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_logout_repetido_com_o_mesmo_token_retorna_400(self):
+        """Testar se um segundo logout com um refresh token já na blacklist é rejeitado com 400, não 500."""
+
+        url = reverse('api:apostador-logout')
+        self.client.post(url, {'refresh': str(self.refresh)}, format='json')
+
+        response = self.client.post(url, {'refresh': str(self.refresh)}, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

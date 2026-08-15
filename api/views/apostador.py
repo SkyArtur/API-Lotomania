@@ -10,7 +10,8 @@ from api.serializers import (
     ApostadorSerializer,
     ApostadorRegistroSerializer,
     ApostadorPerfilSerializer,
-    ApostadorAlterarSenhaSerializer
+    ApostadorAlterarSenhaSerializer,
+    ApostadorLogoutSerializer
 )
 
 
@@ -48,6 +49,8 @@ class ApostadorViewSet(mixins.CreateModelMixin, GenericViewSet):
                 return ApostadorAlterarSenhaSerializer
             case 'perfil':
                 return ApostadorPerfilSerializer
+            case 'logout':
+                return ApostadorLogoutSerializer
 
         return ApostadorSerializer
 
@@ -97,3 +100,22 @@ class ApostadorViewSet(mixins.CreateModelMixin, GenericViewSet):
         serializer = self.get_serializer(request.user)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        description=(
+            'Invalida (blacklist) o refresh token informado, encerrando a sessão do apostador '
+            'autenticado. O access token em uso continua válido até expirar por conta própria '
+            '(ver `ACCESS_TOKEN_LIFETIME`); esta ação apenas impede que esse refresh token gere '
+            'novos access/refresh tokens no futuro.'
+        ),
+        request=ApostadorLogoutSerializer,
+        responses={205: OpenApiResponse(description='Logout realizado com sucesso.')}
+    )
+    @action(detail=False, methods=['post'], url_path='logout')
+    def logout(self, request):
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(status=status.HTTP_205_RESET_CONTENT)

@@ -4,6 +4,7 @@ from .apostador import (
     ApostadorRegistroSerializer,
     ApostadorPerfilSerializer,
     ApostadorAlterarSenhaSerializer,
+    ApostadorLogoutSerializer,
 )
 from .sorteio import (
     SorteioPremioSerializer,
@@ -33,6 +34,7 @@ __all__ = [
     'ApostadorRegistroSerializer',
     'ApostadorPerfilSerializer',
     'ApostadorAlterarSenhaSerializer',
+    'ApostadorLogoutSerializer',
 
     'SorteioPremioSerializer',
     'SorteioSerializer',
