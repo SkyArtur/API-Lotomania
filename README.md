@@ -1,4 +1,4 @@
-# 🎲 API Lotomania
+# 🎲 API Lotomania - 0.2.0
 
 API REST construída com Django REST Framework para registro de apostas da Lotomania e acompanhamento dos sorteios
 oficiais. Projeto de finalidade didática, voltado a uso pessoal e ao estudo prático do framework.
@@ -43,6 +43,7 @@ isso vale conferir a coluna **Acesso** de cada endpoint, e não assumir a regra 
 | POST   | `apostador/`               | Cadastro de um novo usuário                        | 🔓 Público     |
 | PATCH  | `apostador/senha/`         | Atualiza a senha do usuário autenticado            | 🔒 Autenticado |
 | GET    | `apostador/perfil/`        | Dados do usuário autenticado                       | 🔒 Autenticado |
+| POST   | `apostador/logout/`        | Encerra a sessão (blacklist do refresh token)      | 🔒 Autenticado |
 | POST   | `apostas/`                 | Cria uma nova aposta para o usuário autenticado    | 🔒 Autenticado |
 | GET    | `apostas/`                 | Lista as apostas do usuário autenticado            | 🔒 Autenticado |
 | GET    | `apostas/{id}/`            | Detalha uma aposta (somente do próprio usuário)    | 🔒 Autenticado |
@@ -62,6 +63,19 @@ isso vale conferir a coluna **Acesso** de cada endpoint, e não assumir a regra 
 > `GET`, exigem autenticação, já que uma aposta só pode ser vista por quem a fez. Já `apostador/` inverte a lógica
 > de escrita: o cadastro (`POST`) é o único endpoint de escrita público de toda a API, pois é assim que um novo
 > apostador passa a existir.
+
+### 🔍 Filtros e ordenação
+
+`apostas/` e `sorteios/` também aceitam filtros e ordenação via query string (`django-filter` +
+`OrderingFilter` do DRF), sempre combináveis entre si e com a paginação:
+
+| Recurso     | Filtros (`?campo=` / `?campo__lookup=`)                                                                                                          | Ordenação (`?ordering=`)            |
+|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
+| `apostas/`  | `data` (`exact`/`gte`/`lte`), `valor` (`exact`/`gte`/`lte`), `inicial` (`gte`), `final` (`lte`), `espelho` (`exact`), `sorteios__referencia` (`exact`), `resultados__acertos` (`gte`), `premios__valor` (`exact`/`gte`) | `data`, `valor`, `inicial`, `final` |
+| `sorteios/` | `referencia` (`exact`), `data` (`exact`/`gte`/`lte`), `numeros__valor` (`exact`), `premios__pontos` (`exact`), `premios__valor` (`gte`)               | `referencia`, `data`                |
+
+Exemplo: `GET /api-lotomania/apostas/?valor__gte=50&ordering=-data` lista, da mais recente para a mais antiga,
+as apostas de valor igual ou maior que 50.
 
 ## 💻 Execução local (sem Docker)
 
