@@ -1,4 +1,4 @@
-name: api-lotomania-v0.2.0
+name: api-lotomania
 
 services:
   db:
