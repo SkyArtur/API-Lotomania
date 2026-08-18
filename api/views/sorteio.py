@@ -25,8 +25,11 @@ __all__ = ['SorteioViewSet']
 @extend_schema_view(
     list=extend_schema(
         description=(
-            'Retorna uma lista resumida (referência e data) de todos os sorteios cadastrados. '
-            'Endpoint de leitura pública, não exige autenticação.'
+            'Retorna a lista de sorteios cadastrados. Sem filtros, a listagem é resumida '
+            '(referência e data). Se algum filtro for aplicado (`referencia`, `data`, '
+            '`numeros__valor`, `premios__pontos` ou `premios__valor`), a resposta traz os '
+            'detalhes completos (números sorteados e tabela de prêmios) dos sorteios '
+            'encontrados. Endpoint de leitura pública, não exige autenticação.'
         ),
         responses={200: SorteioListSerializer(many=True)}
     ),
@@ -98,9 +101,20 @@ class SorteioViewSet(
             case 'create':
                 return SorteioCreateSerializer
             case 'list':
-                return SorteioListSerializer
+                return SorteioDetalheModelSerializer if self._algum_filtro_aplicado() else SorteioListSerializer
             case _:
                 return SorteioDetalheModelSerializer
+
+    def _algum_filtro_aplicado(self):
+        """Verifica se algum parâmetro de `filterset_fields` foi informado na query string da listagem."""
+
+        campos_filtraveis = {
+            campo if lookup == 'exact' else f'{campo}__{lookup}'
+            for campo, lookups in self.filterset_fields.items()
+            for lookup in lookups
+        }
+
+        return bool(set(self.request.query_params) & campos_filtraveis)
 
     def create(self, request, *args, **kwargs):
 
