@@ -1,4 +1,4 @@
-# 🎲 API Lotomania - 0.2.0
+# 🎲 API Lotomania - 0.3.0
 
 API REST construída com Django REST Framework para registro de apostas da Lotomania e acompanhamento dos sorteios
 oficiais. Projeto de finalidade didática, voltado a uso pessoal e ao estudo prático do framework.
@@ -51,7 +51,7 @@ isso vale conferir a coluna **Acesso** de cada endpoint, e não assumir a regra 
 | GET    | `apostas/ultima-aposta/`   | Última aposta do usuário autenticado               | 🔒 Autenticado |
 | GET    | `apostas/detalhadas/`      | Lista detalhada das apostas do usuário autenticado | 🔒 Autenticado |
 | POST   | `sorteios/`                | Cadastra um sorteio manualmente                    | 🔒 Autenticado |
-| GET    | `sorteios/`                | Lista os sorteios cadastrados                      | 🔓 Público     |
+| GET    | `sorteios/`                | Lista os sorteios cadastrados (detalhada quando filtrada) | 🔓 Público     |
 | GET    | `sorteios/ultimo-sorteio/` | Último sorteio cadastrado                          | 🔓 Público     |
 | GET    | `sorteios/detalhados/`     | Lista de sorteios em detalhes                      | 🔓 Público     |
 | GET    | `numeros/`                 | Lista os números válidos (0–99)                    | 🔓 Público     |
@@ -73,6 +73,10 @@ isso vale conferir a coluna **Acesso** de cada endpoint, e não assumir a regra 
 |-------------|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------|
 | `apostas/`  | `data` (`exact`/`gte`/`lte`), `valor` (`exact`/`gte`/`lte`), `inicial` (`gte`), `final` (`lte`), `espelho` (`exact`), `sorteios__referencia` (`exact`), `resultados__acertos` (`gte`), `premios__valor` (`exact`/`gte`) | `data`, `valor`, `inicial`, `final` |
 | `sorteios/` | `referencia` (`exact`), `data` (`exact`/`gte`/`lte`), `numeros__valor` (`exact`), `premios__pontos` (`exact`), `premios__valor` (`gte`)               | `referencia`, `data`                |
+
+> **📌 Importante:** em `sorteios/`, a listagem sem filtro é resumida (`referencia`/`data`). Assim que qualquer um
+> dos filtros acima é aplicado, a resposta passa a trazer os detalhes completos de cada sorteio (números
+> sorteados e tabela de prêmios), evitando uma segunda chamada para ver o resultado do filtro.
 
 Exemplo: `GET /api-lotomania/apostas/?valor__gte=50&ordering=-data` lista, da mais recente para a mais antiga,
 as apostas de valor igual ou maior que 50.

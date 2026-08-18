@@ -14,9 +14,8 @@ mais recente publicada recebe correções de segurança. Versões anteriores fic
 
 | Versão   | Suportada          |
 | -------- | ------------------- |
-| 0.1.1    | :white_check_mark:  |
-| 0.1.0    | :x: (superada pela 0.1.1 — veja o [changelog](../../releases)) |
-| < 0.1.0  | :x:                  |
+| 0.3.0    | :white_check_mark:  |
+| < 0.3.0  | :x: (superada pela 0.3.0 — veja o [changelog](../../releases)) |
 
 ## Reportando uma vulnerabilidade
 
